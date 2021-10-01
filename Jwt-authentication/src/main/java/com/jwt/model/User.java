@@ -1,8 +1,11 @@
 package com.jwt.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,11 +14,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import org.springframework.core.io.FileUrlResource;
 
 @Entity
 @Table(name = "users",
@@ -27,6 +33,11 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@NotBlank
+	@Size(max = 30)
+	private String name;
+	
 	
 	@NotBlank
 	@Size(max = 20)
@@ -46,7 +57,14 @@ public class User {
 				joinColumns = @JoinColumn(name= "user_id"),
 				inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
+			mappedBy = "user", orphanRemoval = true)
+	private List<Post> posts = new ArrayList<Post>();
+	
 
+//	private FileUrlResource image;
+	
 	public User() {
 		super();
 	}
