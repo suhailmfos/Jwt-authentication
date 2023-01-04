@@ -2,12 +2,14 @@ package com.jwt.controller;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -120,8 +122,11 @@ public class AuthController {
 			});
 		}
 		user.setRoles(roles);
-		this.userRepository.save(user);
-		return ResponseEntity.ok(new MessageResponse("You have registered successfully!"));
+		
+		User savedUser = this.userRepository.save(user);
+		if(Objects.nonNull(savedUser))
+			return ResponseEntity.ok(new MessageResponse("You have registered successfully!"));
+		else return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_REQUEST);
 	}
 	
 }
